@@ -2,6 +2,10 @@
 #include <iostream>
 #include <list>
 #include <string>
+
+#include <algorithm>
+#include <vector>
+
 using namespace std;
 
 
@@ -14,6 +18,19 @@ public:
 	list<TrieNode*> node;
 	bool isLeaf;
 	char letter;
+
+	void searchOnList(val)
+	{
+		for (list<TrieNode*>::iterator it = node.begin(); it != node.end(); it++)
+		{
+			if (this->letter == val[0])
+			{
+
+
+			}
+		}
+	}
+
 
 };
 
@@ -32,9 +49,21 @@ void Trie::insert(string val)
 {
 	if (search(val))
 		return;// the word is exist
-	else
-		while (val)
-		{
-			// function to check every letter in the string if it is exsit in the system,if yes continue if no create new path.
-		}///its salay
+	/*else*/
+
+
+
+
+
+	//while (!val.empty)
+	//{
+
+	//	if (val[0] == root->letter)
+	//	{
+
+
+	//	}
+
+	//	// function to check every letter in the string if it is exsit in the system,if yes continue if no create new path.
+	//}///its salay
 }
