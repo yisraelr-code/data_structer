@@ -20,6 +20,8 @@ class Trie
 {
 	TrieNode* remove(TrieNode* Root, string val, int level);
 	TrieNode* getNode();
+	void storeInColtainer(TrieNode* Root, char* wordArr, int level);
+	void printWord(char* wordArr, int level);
 	TrieNode* root;
 public:
 	void insert(string word);
@@ -111,13 +113,43 @@ TrieNode* Trie::remove(TrieNode* Root, string val, int level)
 }
 int Trie::printAutoSuggestions(string word)
 {
-	////if the word isn't exist.
-	//if (!search(word))
-	//	return 0;
-	//TrieNode* father = root;
-	//for (int i = 0; i < word.length(); i++)
-	//{
-	//	int index = word[i] - 'a';
-	//	father = father->node[index];
-	//}
+	//if the word isn't exist.
+	if (!search(word))
+		return 0;
+	TrieNode* father = root;
+	for (int i = 0; i < word.length(); i++)
+	{
+		int index = word[i] - 'a';
+		father = father->node[index];
+	}
+	char wordArr[100];
+	//we sending to the 'storeInColtainer' method node that has the last letter in the suggetsion word.  
+	storeInColtainer(father,wordArr,0);
+	return 1;
+}
+void Trie::storeInColtainer(TrieNode* Root, char* wordArr, int level)
+{
+	//function that goes over the subTree start from Root, and save all the letter in the path, and save them in arry. 
+	if (!Root)
+		return;
+	//we sending the full arry that contain a word, to the printWord method.
+	if (Root->isLeaf)
+		printWord(wordArr, level);
+	for (int i = 0; i < ALPHA_BET_SIZE; i++)
+	{
+		if (Root->node[i])
+		{
+			wordArr[level] = i + 'a';
+			storeInColtainer(Root->node[i], wordArr, level + 1);
+		}
+	}
+}
+void Trie::printWord(char* wordArr, int level) 
+{
+	//function to print word that contain in an arry.
+	cout << endl;
+	for (int i = 0; i < level; i++) 
+	{
+		cout << wordArr[i] << " ";
+	}
 }
