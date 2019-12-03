@@ -18,15 +18,15 @@ public:
 
 class Trie
 {
-public:
+	TrieNode* remove(TrieNode* Root, string val, int level);
+	TrieNode* getNode();
 	TrieNode* root;
+public:
 	void insert(string word);
 	bool del(string word);
 	bool search(string word);
 	int printAutoSuggestions(string word);
-	TrieNode* getNode();
 	Trie() { root = NULL; }
-	bool Contine(TrieNode* ptr);
 };
 TrieNode* Trie::getNode()
 {
@@ -75,41 +75,49 @@ void Trie::insert(string val)
 bool Trie::del(string word)
 {
 	//if the word is not exist in the system, return false.
-	if (!search(word))return false;
-
-	//it the word is the begginning of another word, we need to change only the flag.
-
+	if (!search(word))
+		return false;
+	remove(root, word, 0);
+	return true;
+}
+TrieNode* Trie::remove(TrieNode* Root, string val, int level)
+{
+	if (!Root)
+		return nullptr;
+	//in case that the last character of the word are being processed.
+	if (level == val.size())
+	{
+		//change the flag.
+		if (Root->isLeaf)
+			Root->isLeaf = false;
+		//if it's not prefix of another word.
+		if (Root)
+		{
+			delete Root;
+			Root = nullptr;
+		}
+		return Root;
+	}
+	//if we not in  the last character in the word,continue to the child using ASCII table.
+	int index = val[level] - 'a';
+	Root->node[index] = remove(Root->node[index], val, level + 1);
+	// if the root does not have child,and it's not end of another wordl
+	if (Root && Root->isLeaf == false)
+	{
+		delete Root;
+		Root = nullptr;
+	}
+	return Root;
+}
+int Trie::printAutoSuggestions(string word)
+{
+	////if the word isn't exist.
+	//if (!search(word))
+	//	return 0;
 	//TrieNode* father = root;
 	//for (int i = 0; i < word.length(); i++)
 	//{
-	//	/*int index = word[i] - 'a';
-	//	father = father->node[index];*/
-	//	if (!father->node[i])
-	//	{
-	//		father->isLeaf = false;
-	//		return true;
-	//	}
+	//	int index = word[i] - 'a';
+	//	father = father->node[index];
 	//}
-
-	//here we need to delete all the letter in the word.
-	int count = word.length() - 1;
-	TrieNode* curr = father;
-
-}
-bool Trie::Contine(TrieNode* ptr)
-{
-	int counter = 0;
-	if (ptr->isLeaf)
-		return true;
-
-	for (int i = 0; i < 26; i++)
-	{
-		if (ptr->node[i])//cheacking if the end of the word has a son
-		{
-			counter++;
-			if (counter > 1)
-				return true;
-		}
-	}
-	return false;
 }
