@@ -13,65 +13,60 @@ class TrieNode
 public:
 	TrieNode* node[ALPHA_BET_SIZE];
 	bool isLeaf;
-	char letter;
+	TrieNode();
+	bool IHaveKids() {
+		for (int i = 0; i < ALPHA_BET_SIZE; i++)
+		{ if (node[i])
+			return true; 
+		}
+		return false;
+	}
 };
-
-class Trie
+TrieNode::TrieNode()
 {
-	TrieNode* remove(TrieNode* Root, string val, int level);
-	TrieNode* getNode();
+	for (int i = 0; i < ALPHA_BET_SIZE; i++)
+	{
+		node[i] = NULL;
+	}
+	isLeaf = false;
+}
+
+
+
+class Trie 
+{
+	bool Search(TrieNode* Root, string val);
+	void Insert(TrieNode* Root, string val);
+	void remove(TrieNode* Root, string val);
 	void storeInColtainer(TrieNode* Root, char* wordArr, int level);
 	void printWord(char* wordArr, int level);
+	bool noBrothers(TrieNode* Root, int chek);
 	TrieNode* root;
 public:
 	void insert(string word);
 	bool del(string word);
 	bool search(string word);
 	int printAutoSuggestions(string word);
-	Trie() { root = NULL; }
+	Trie() { root = new TrieNode; }
 };
-TrieNode* Trie::getNode()
-{
-	TrieNode* curr = new TrieNode;
-	curr->isLeaf = false;
-	for (int i = 0; i < ALPHA_BET_SIZE; i++)
-	{
-		curr->node[i] = nullptr;
-	}
-	return curr;
-}
+
+
+
+
 bool Trie::search(string word)
 {
-	TrieNode* temp = root;
-	for (int i = 0; i < word.length(); i++)
-	{
-		int index = word[i] - 'a';
-		if (temp->node[index]->letter != word[i])
-		{
-			return false;
-		}
-		temp = temp->node[index];
-	}
-	return (temp != nullptr && temp->isLeaf);
+	return Search(root,word);
 }
 void Trie::insert(string val)
 {
 	if (search(val))
 	{
-		cout << "the word is exist!\n";
+		//cout << "the word is exist!\n";
 		return;
 	}
 	else
 	{
-		TrieNode* father = root;
-		for (int i = 0; i < val.length(); i++)
-		{
-			int index = val[i] - 'a';
-			if (!father->node[index])
-				father->node[index] = getNode();
-			father = father->node[index];
-		}
-		father->isLeaf = true;
+		Insert(root, val);
 	}
 }
 bool Trie::del(string word)
@@ -79,37 +74,46 @@ bool Trie::del(string word)
 	//if the word is not exist in the system, return false.
 	if (!search(word))
 		return false;
-	remove(root, word, 0);
+	remove(root, word);
 	return true;
 }
-TrieNode* Trie::remove(TrieNode* Root, string val, int level)
+void Trie::remove(TrieNode* Root, string val)
 {
-	if (!Root)
-		return nullptr;
-	//in case that the last character of the word are being processed.
-	if (level == val.size())
-	{
-		//change the flag.
-		if (Root->isLeaf)
-			Root->isLeaf = false;
-		//if it's not prefix of another word.
-		if (Root)
-		{
+	if (val.length() == 0) 
+	{     
+		if (!Root->IHaveKids()) {
 			delete Root;
-			Root = nullptr;
+			Root = NULL;
+			return;
 		}
-		return Root;
+		else
+			Root->isLeaf = false;
+		return;
 	}
-	//if we not in  the last character in the word,continue to the child using ASCII table.
-	int index = val[level] - 'a';
-	Root->node[index] = remove(Root->node[index], val, level + 1);
-	// if the root does not have child,and it's not end of another wordl
-	if (Root && Root->isLeaf == false)
+	char ch = *(val.begin());
+	val.erase(val.begin());
+	if (Root->node[ch - 'a'])
 	{
-		delete Root;
-		Root = nullptr;
+		remove(Root->node[ch - 'a'], val);
 	}
-	return Root;
+	if (noBrothers(Root->node[ch - 'a'], ch - 'a')) {
+		if (!Root->isLeaf) {
+			delete Root;
+			Root = NULL;
+		}
+	}
+}
+bool Trie::noBrothers(TrieNode* Root, int chek)
+{
+	bool flag = true;
+	for (int i = 0; i < ALPHA_BET_SIZE; i++) 
+	{
+		if (Root->node[i]) {
+			if (i != chek)
+				flag = false;
+		}
+	}
+	return flag;
 }
 int Trie::printAutoSuggestions(string word)
 {
@@ -152,4 +156,32 @@ void Trie::printWord(char* wordArr, int level)
 	{
 		cout << wordArr[i] << " ";
 	}
+}
+void Trie::Insert(TrieNode* Root, string val)
+{
+	if (val.length() == 0) {
+		Root->isLeaf = true;
+		return;
+	}
+	char ch = *(val.begin());
+	val.erase(val.begin());
+	if (!Root->node[ch - 'a'])
+		Root->node[ch - 'a'] = new TrieNode;
+	Insert(Root->node[ch - 'a'], val);
+}
+bool Trie::Search(TrieNode* Root, string val)
+{
+	if (val.length() == 0)
+	{
+			if (Root->isLeaf)
+				return true;
+			else
+				return false;
+	}
+	char ch = *(val.begin());
+	val.erase(val.begin());
+	if (!Root->node[ch - 'a'])
+		return false;
+	else
+		return Search(Root->node[ch - 'a'], val);
 }
