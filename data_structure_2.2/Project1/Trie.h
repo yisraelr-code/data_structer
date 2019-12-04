@@ -1,3 +1,11 @@
+/* 
+The goal of this program : Tire implementaion 
+name of corse : Data data_structure
+targil 2
+AUTHORS:		Salay Shalom Shuker ,Yisrael Rolnick 
+ID:				311600605 , 206672057
+*/
+
 #pragma once
 #include <iostream>
 #include <list>
@@ -112,9 +120,7 @@ bool Trie::noBrothers(TrieNode* Root, int chek)
 }
 int Trie::printAutoSuggestions(string word)
 {
-	//if the word isn't exist.
-	if (!search(word))
-		return 0;
+
 	TrieNode* father = root;
 	for (int i = 0; i < word.length(); i++)
 	{
