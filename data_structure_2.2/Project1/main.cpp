@@ -6,14 +6,16 @@ AUTHORS:		Salay Shalom Shuker ,Yisrael Rolnick
 ID:				311600605 , 206672057
 */
 
+
 #include <iostream>
-#include <string>
 #include <list>
-#include "Trie.h"
+#include <string>
+#include "trie.h"
+
 using namespace std;
 
 
-void main()
+int main()
 {
 
 	char ch;
@@ -65,4 +67,6 @@ void main()
 		default: cout << "ERROR " << endl;  break;
 		}//switch
 	} while (ch != '5');
+
+	return 0;
 }
